@@ -23,9 +23,7 @@ export const Documents: FC<Props> = memo(
   }) => {
 
     return (
-      <div className="relative flex-1 overflow-hidden bg-white dark:bg-[#343541]">
         <DocumentsInMarkdown documents={documents}/>
-      </div>
     );
   },
 );

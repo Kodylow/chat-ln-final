@@ -54,7 +54,7 @@ def load_documents():
                 clone_url=url,
                 repo_path=temp_dir,
                 branch=branch,
-                file_filter=lambda file_path: file_path.endswith(".md")
+                file_filter=lambda file_path: file_path.endswith(".asciidoc")
             )
             print("Loading documents")
             data = loader.load()

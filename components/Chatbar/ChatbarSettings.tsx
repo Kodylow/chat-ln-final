@@ -76,14 +76,6 @@ export const ChatbarSettings: FC<Props> = ({
         <ClearConversations onClearConversations={onClearConversations} />
       ) : null}
 
-      <Import onImport={onImportConversations} />
-
-      <SidebarButton
-        text={t('Export data')}
-        icon={<IconFileExport size={18} />}
-        onClick={() => onExportConversations()}
-      />
-
       <SidebarButton
         text={`WebLn ${isWebLnEnabled ? 'En' : 'Dis'}abled`}
         icon={<IconBolt size={18} />}
@@ -97,26 +89,7 @@ export const ChatbarSettings: FC<Props> = ({
         }}
       />
 
-      {!(serverSideApiKeyIsSet) ? (
-        <Key apiKey={apiKey} onApiKeyChange={onApiKeyChange} />
-      ) : null}
-
-      {!(serverSidePluginKeysSet) ? (
-        <PluginKeys
-          pluginKeys={pluginKeys}
-          onPluginKeyChange={onPluginKeyChange}
-          onClearPluginKey={onClearPluginKey}
-        />
-      ) : null}
       <LoginWithLightning onClick={handleLoginClick} />
-
-      <Key apiKey={apiKey} onApiKeyChange={onApiKeyChange} />
-
-      <PluginKeys
-        pluginKeys={pluginKeys}
-        onPluginKeyChange={onPluginKeyChange}
-        onClearPluginKey={onClearPluginKey}
-      />
 
       {showModal && (
         <LoginModal
