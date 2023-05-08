@@ -1,3 +1,4 @@
+import { DataSource } from './dataSource';
 import { OpenAIModel } from './openai';
 
 export interface Message {

@@ -5,7 +5,7 @@ export const updateDataSource = (
   allDataSources: DataSource[],
 ) => {
   const updatedDataSources = allDataSources.map((c) => {
-    if (c.id === updatedDataSource.id) {
+    if (c.url === updatedDataSource.url) {
       return updatedDataSource;
     }
 
@@ -21,5 +21,6 @@ export const updateDataSource = (
 };
 
 export const saveDataSources = (dataSources: DataSource[]) => {
+  console.log('Saving data sources to local storage')
   localStorage.setItem('datasources', JSON.stringify(dataSources));
 };

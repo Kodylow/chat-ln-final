@@ -1,10 +1,12 @@
 import { Chat } from '@/components/Chat/Chat';
+import { Documents } from '@/components/Chat/Documents';
 import { Chatbar } from '@/components/Chatbar/Chatbar';
 import { DataSourceBar } from '@/components/DataSources/DataSourceBar';
 import { Navbar } from '@/components/Mobile/Navbar';
 import { ChatBody, Conversation, Message } from '@/types/chat';
 import { KeyValuePair } from '@/types/data';
 import { DataSource } from '@/types/dataSource';
+import { Doc } from '@/types/doc';
 import { ErrorMessage } from '@/types/error';
 import { LatestExportFormat, SupportedExportFormats } from '@/types/export';
 import { Folder, FolderType } from '@/types/folder';
@@ -81,6 +83,8 @@ const Home: React.FC<HomeProps> = ({
   const [dataSources, setDataSources] = useState<DataSource[]>([]);
   const [showDataSourceBar, setShowDataSourceBar] = useState<boolean>(true);
 
+  const [documents, setDocuments] = useState<Doc[]>([]);
+
   // REFS ----------------------------------------------
 
   const stopConversationRef = useRef<boolean>(false);
@@ -115,6 +119,29 @@ const Home: React.FC<HomeProps> = ({
       setSelectedConversation(updatedConversation);
       setLoading(true);
       setMessageIsStreaming(true);
+
+      console.log("message.content: ", message.content)
+      console.log("Starting pinecone search...")
+      const pineconeEndpointWithQuery = `/api/searchDocuments?query=${encodeURIComponent(message.content)}`;
+
+      const documentsResponse = await fetch(pineconeEndpointWithQuery, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      console.log("pinecone search complete")
+
+      const documentsData = await documentsResponse.json();
+      const documents = documentsData.results.map((result: any) => {
+        return {
+          metadata: result.metadata,
+          pageContent: result.pageContent,
+        };
+      });
+      
+      console.log("documents: ", documents)
+      setDocuments(documents);
 
       const chatBody: ChatBody = {
         model: updatedConversation.model,
@@ -606,9 +633,8 @@ const Home: React.FC<HomeProps> = ({
     const newDataSource: DataSource = {
       id: uuidv4(),
       name: `DataSource ${dataSources.length + 1}`,
-      description: '',
-      content: '',
-      folderId: null,
+      type: 'GitHub',
+      url: ''
     };
 
     const updatedDataSources = [...dataSources, newDataSource];
@@ -746,6 +772,11 @@ const Home: React.FC<HomeProps> = ({
       setPrompts(JSON.parse(prompts));
     }
 
+    const dataSources = localStorage.getItem('datasources');
+    if (dataSources) {
+      setDataSources(JSON.parse(dataSources));
+    }
+
     const conversationHistory = localStorage.getItem('conversationHistory');
     if (conversationHistory) {
       const parsedConversationHistory: Conversation[] =
@@ -864,6 +895,9 @@ const Home: React.FC<HomeProps> = ({
                 onUpdateConversation={handleUpdateConversation}
                 onEditMessage={handleEditMessage}
                 stopConversationRef={stopConversationRef}
+              />
+              <Documents
+                documents={documents}
               />
             </div>
             {showPromptbar ? (

@@ -26,6 +26,14 @@ pinecone.init(
 embeddings = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY, model="text-embedding-ada-002")
 index_name = "chatln"
 
+def is_zero_content(content, threshold=0.9):
+    zero_count = content.count('0')
+    if zero_count / len(content) >= threshold:
+        print("Zero content detected")
+        return True
+    return False
+
+
 def load_markdown_files(repo_path):
     markdown_files = glob.glob(os.path.join(repo_path, "**/*.md"), recursive=True)
     return markdown_files
@@ -35,6 +43,7 @@ def load_documents():
     data = request.get_json()
     url = data.get('url')
     loader_type = data.get('loader_type')
+    branch = data.get('branch')
 
     with tempfile.TemporaryDirectory() as temp_dir:
         # subprocess.run(["git", "clone", url, temp_dir])
@@ -44,7 +53,8 @@ def load_documents():
             loader = GitLoader(
                 clone_url=url,
                 repo_path=temp_dir,
-                branch="master",
+                branch=branch,
+                file_filter=lambda file_path: file_path.endswith(".md")
             )
             print("Loading documents")
             data = loader.load()
@@ -58,8 +68,11 @@ def load_documents():
             return jsonify({'error': 'Invalid loader type'}), 400
 
         print("Running text splitter")
-        text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
+        text_splitter = RecursiveCharacterTextSplitter(chunk_size=8000, chunk_overlap=1000)
         texts = text_splitter.split_documents(data)
+        # Filter out texts with too many zeros
+        texts = [t for t in texts if not is_zero_content(t.page_content)]
+
         # Update metadata for each text
         for text in texts:
             text.metadata['url'] = url
