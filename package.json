@@ -13,8 +13,10 @@
   },
   "dependencies": {
     "@dqbd/tiktoken": "^1.0.2",
+    "@noble/secp256k1": "1.6.0",
     "@pinecone-database/pinecone": "^0.0.14",
     "@tabler/icons-react": "^2.9.0",
+    "bech32": "^2.0.0",
     "cookie": "^0.5.0",
     "eventsource-parser": "^0.1.0",
     "i18next": "^22.4.13",

@@ -83,7 +83,11 @@ const Home: React.FC<HomeProps> = ({
   const [dataSources, setDataSources] = useState<DataSource[]>([{"id":"e7ea7807-1350-41ca-91e1-f7571b55319b","name":"Mastering the Lightning Network","type":"GitHub","url":"https://github.com/lnbook/lnbook"},{"id":"d7fa9536-552a-402b-970e-390694fcd47c","name":"BOLT Specs","type":"GitHub","url":"https://github.com/lightning/bolts"},{"id":"63d460c5-d402-4a1c-a873-3cbc0adb3319","name":"LND Docs","type":"GitHub","url":"https://github.com/lightninglabs/docs.lightning.engineering"},{"id":"0e5307a9-0db2-4418-b581-93dca5b1e067","name":"Bitcoin Core Documentation","type":"GitHub","url":"https://github.com/bitcoin/bitcoin"},{"id":"ef781eef-cab4-44ab-b9ab-7a28ca02f8b1","name":"Grokking Bitcoin","type":"GitHub","url":"https://github.com/kallerosenbaum/grokkingbitcoin"}]);
   const [showDataSourceBar, setShowDataSourceBar] = useState<boolean>(true);
 
-  const [documents, setDocuments] = useState<Document[]>([]);;
+  const [documents, setDocuments] = useState<Document[]>([]);
+
+  const [userPubkey, setUserPubkey] = useState<string>('');
+
+
 
   // REFS ----------------------------------------------
 
@@ -376,6 +380,11 @@ const Home: React.FC<HomeProps> = ({
   const handleApiKeyChange = (apiKey: string) => {
     setApiKey(apiKey);
     localStorage.setItem('apiKey', apiKey);
+  };
+
+  const handleSetUserPubkey = (pubkey: string) => {
+    setUserPubkey(pubkey);
+    localStorage.setItem('userPubkey', pubkey);
   };
 
   const handlePluginKeyChange = (pluginKey: PluginKey) => {
@@ -740,6 +749,11 @@ const Home: React.FC<HomeProps> = ({
       fetchModels(apiKey);
     }
 
+    const userPubkey = localStorage.getItem('userPubkey');
+    if (userPubkey) {
+      setUserPubkey(userPubkey);
+    }
+
     const pluginKeys = localStorage.getItem('pluginKeys');
     if (serverSidePluginKeysSet) {
       setPluginKeys([]);
@@ -858,6 +872,8 @@ const Home: React.FC<HomeProps> = ({
                   onPluginKeyChange={handlePluginKeyChange}
                   onClearPluginKey={handleClearPluginKey}
                   setIsWebLnEnabled={setIsWebLnEnabled}
+                  userPubkey={userPubkey}
+                  setUserPubkey={handleSetUserPubkey}
                 />
 
                 <button

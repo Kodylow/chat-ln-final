@@ -40,6 +40,8 @@ interface Props {
   onPluginKeyChange: (pluginKey: PluginKey) => void;
   onClearPluginKey: (pluginKey: PluginKey) => void;
   setIsWebLnEnabled: (enabled: boolean) => void;
+  userPubkey: string;
+  setUserPubkey: (pubkey: string) => void;
 }
 
 export const Chatbar: FC<Props> = ({
@@ -68,6 +70,8 @@ export const Chatbar: FC<Props> = ({
   onPluginKeyChange,
   onClearPluginKey,
   setIsWebLnEnabled,
+  userPubkey,
+  setUserPubkey,
 }) => {
   const { t } = useTranslation('sidebar');
   const [searchTerm, setSearchTerm] = useState<string>('');
@@ -219,6 +223,8 @@ export const Chatbar: FC<Props> = ({
         onClearPluginKey={onClearPluginKey}
         isWebLnEnabled={isWebLnEnabled}
         setIsWebLnEnabled={setIsWebLnEnabled}
+        userPubkey={userPubkey}
+        setUserPubkey={setUserPubkey}
       />
     </div>
   );

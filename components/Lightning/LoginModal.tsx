@@ -3,16 +3,10 @@ import QRCode from 'qrcode.react';
 import { useEffect, useRef, useState } from 'react';
 import bolt11 from 'bolt11';
 
-type LoginRequest = {
-  status: string;
-  encoded: string;
-  url: string;
-};
-
 type LoginModalProps = {
-  loginRequest: LoginRequest | null;
+  loginRequest: string;
   setShowModal: (showModal: boolean) => void;
-  onLoginSuccess: () => void;
+  onLoginSuccess: (pubkey: string) => void;
 };
 
 export function LoginModal({
@@ -29,7 +23,7 @@ export function LoginModal({
 
   const handleCopyClick = () => {
     if (loginRequest) {
-      navigator.clipboard.writeText(loginRequest.encoded);
+      navigator.clipboard.writeText(loginRequest);
     }
   };
 
@@ -50,7 +44,7 @@ export function LoginModal({
 
   const handleOpenClick = () => {
     if (loginRequest) {
-      window.open(`lightning:${loginRequest.encoded}`);
+      window.open(`lightning:${loginRequest}`);
     }
   };
 
@@ -79,12 +73,13 @@ export function LoginModal({
       if (!loginRequest) return;
 
       try {
-        const response = await fetch('/api/is-logged-in');
+        const response = await fetch('/api/pending');
         const result = await response.json();
-        if (result.logged_in) {
+        console.log('pending', result);
+        if (result.status === 'success') {
           setStatus('success');
           clearInterval(interval);
-          onLoginSuccess();
+          onLoginSuccess(result.pubkey);
           setTimeout(() => setShowModal(false), 2000);
         } else {
           setStatus('pending');
@@ -110,7 +105,7 @@ export function LoginModal({
       {loginRequest && (
         <div className="rounded bg-white p-2">
           <QRCode
-            value={loginRequest.encoded}
+            value={loginRequest}
             size={224}
             onClick={handleCopyClick}
             className="h-full w-full cursor-pointer"

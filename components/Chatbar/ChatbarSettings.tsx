@@ -32,6 +32,8 @@ interface Props {
   onClearPluginKey: (pluginKey: PluginKey) => void;
   isWebLnEnabled: boolean;
   setIsWebLnEnabled: (enabled: boolean) => void;
+  userPubkey: string;
+  setUserPubkey: (pubkey: string) => void;
 }
 
 export const ChatbarSettings: FC<Props> = ({
@@ -50,24 +52,31 @@ export const ChatbarSettings: FC<Props> = ({
   onClearPluginKey,
   isWebLnEnabled,
   setIsWebLnEnabled,
+  userPubkey,
+  setUserPubkey
 }) => {
   const { t } = useTranslation('sidebar');
   const [showModal, setShowModal] = useState(false);
-  const [loginRequest, setLoginRequest] = useState(null);
+  const [loginRequest, setLoginRequest] = useState("");
 
   const handleLoginClick = async () => {
     try {
-      const response = await fetch('/api/get-login-url');
+      const response = await fetch('/api/lnurl-challenge');
+      console.log('get-login-url response', response)
       const data = await response.json();
-      setLoginRequest(data);
+      console.log('get-login-url data', data.lnurl)
+      setLoginRequest(data.lnurl);
       setShowModal(true);
     } catch (error) {
       console.error('Error fetching login URL:', error);
     }
   };
 
-  const handleLoginSuccess = () => {
+  const handleLoginSuccess = (pubkey: string) => {
     // Perform any action needed after a successful login, e.g., redirect or fetch user data
+    setShowModal(false);
+
+    setUserPubkey(pubkey);
   };
 
   return (
@@ -89,7 +98,7 @@ export const ChatbarSettings: FC<Props> = ({
         }}
       />
 
-      <LoginWithLightning onClick={handleLoginClick} />
+      <LoginWithLightning setUserPubkey={setUserPubkey} userPubkey={userPubkey} onClick={handleLoginClick} />
 
       {showModal && (
         <LoginModal
