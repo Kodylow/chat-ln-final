@@ -88,7 +88,7 @@ export const DocumentsInMarkdown: React.FC<DocumentsInMarkdownProps> = ({
       }, []);
       
         return (
-            <div className="relative flex-1 overflow-hidden bg-white dark:bg-[#343541]">
+            <div className="relative z-10 flex-1 overflow-hidden bg-white dark:bg-[#343541]">
               <div className="max-h-full overflow-x-hidden overflow-y-auto" ref={documentsContainerRef}>
               <div className="p-4 space-y-4">
         <div className="flex items-center mb-4">

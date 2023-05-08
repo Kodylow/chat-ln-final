@@ -1,12 +1,11 @@
 import { Chat } from '@/components/Chat/Chat';
-import { Documents } from '@/components/Chat/Documents';
+import { DocumentsInMarkdown } from '@/components/Chat/DocumentsInMarkdown';
 import { Chatbar } from '@/components/Chatbar/Chatbar';
 import { DataSourceBar } from '@/components/DataSources/DataSourceBar';
 import { Navbar } from '@/components/Mobile/Navbar';
 import { ChatBody, Conversation, Message } from '@/types/chat';
 import { KeyValuePair } from '@/types/data';
 import { DataSource } from '@/types/dataSource';
-import { Doc } from '@/types/doc';
 import { ErrorMessage } from '@/types/error';
 import { LatestExportFormat, SupportedExportFormats } from '@/types/export';
 import { Folder, FolderType } from '@/types/folder';
@@ -34,6 +33,7 @@ import { saveFolders } from '@/utils/app/folders';
 import { exportData, importData } from '@/utils/app/importExport';
 import { savePrompts } from '@/utils/app/prompts';
 import { IconArrowBarLeft, IconArrowBarRight } from '@tabler/icons-react';
+import { Document } from 'langchain/document';
 import { GetServerSideProps } from 'next';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
@@ -83,7 +83,7 @@ const Home: React.FC<HomeProps> = ({
   const [dataSources, setDataSources] = useState<DataSource[]>([{"id":"e7ea7807-1350-41ca-91e1-f7571b55319b","name":"Mastering the Lightning Network","type":"GitHub","url":"https://github.com/lnbook/lnbook"},{"id":"d7fa9536-552a-402b-970e-390694fcd47c","name":"BOLT Specs","type":"GitHub","url":"https://github.com/lightning/bolts"},{"id":"63d460c5-d402-4a1c-a873-3cbc0adb3319","name":"LND Docs","type":"GitHub","url":"https://github.com/lightninglabs/docs.lightning.engineering"},{"id":"0e5307a9-0db2-4418-b581-93dca5b1e067","name":"Bitcoin Core Documentation","type":"GitHub","url":"https://github.com/bitcoin/bitcoin"},{"id":"ef781eef-cab4-44ab-b9ab-7a28ca02f8b1","name":"Grokking Bitcoin","type":"GitHub","url":"https://github.com/kallerosenbaum/grokkingbitcoin"}]);
   const [showDataSourceBar, setShowDataSourceBar] = useState<boolean>(true);
 
-  const [documents, setDocuments] = useState<Doc[]>([]);
+  const [documents, setDocuments] = useState<Document[]>([]);;
 
   // REFS ----------------------------------------------
 
@@ -896,7 +896,7 @@ const Home: React.FC<HomeProps> = ({
                 onEditMessage={handleEditMessage}
                 stopConversationRef={stopConversationRef}
               />
-              {documents.length > 0 && <Documents
+              {documents.length > 0 && <DocumentsInMarkdown
                 documents={documents}
               />}
             </div>
